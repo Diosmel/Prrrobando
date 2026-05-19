@@ -1,0 +1,47 @@
+name: Import AutoGPT Repository
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['main']
+    paths: ['.github/workflows/import-autogpt.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  import-autogpt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Create or switch to target branch
+        run: |
+          git checkout -b claude/integrate-ai-repository-kvUgB 2>/dev/null || git checkout claude/integrate-ai-repository-kvUgB
+
+      - name: Clear existing content
+        run: |
+          git rm -rf . --ignore-unmatch || true
+
+      - name: Clone AutoGPT (shallow)
+        run: |
+          git clone --depth 1 https://github.com/Significant-Gravitas/AutoGPT.git /tmp/autogpt
+          rm -rf /tmp/autogpt/.git
+
+      - name: Copy AutoGPT files
+        run: |
+          cp -r /tmp/autogpt/. ./
+
+      - name: Commit and push
+        run: |
+          git add .
+          git commit -m "Import AutoGPT (184k stars) - most popular open source AI repository"
+          git push -u origin claude/integrate-ai-repository-kvUgB
