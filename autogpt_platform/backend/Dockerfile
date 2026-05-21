@@ -135,6 +135,10 @@ RUN apt-get update \
     && rm -rf /tmp/* /root/.npm
 
 ENV AGENT_BROWSER_EXECUTABLE_PATH=/usr/bin/chromium
+# Tell Playwright and browser-use to use the system Chromium already installed above.
+# This avoids downloading a second ~300 MB Chromium binary at runtime.
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 WORKDIR /app/autogpt_platform/backend
 
